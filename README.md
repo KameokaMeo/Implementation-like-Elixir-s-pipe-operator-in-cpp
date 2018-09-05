@@ -1,28 +1,52 @@
 Use like this.
+The mechanism to pass only the first argument is not done well yet.
 ```C++
 #include <functional>
-#include <tuple>
 #include <iostream>
+#include <string>
+#include <vector>
 #include "PipeFunction.hpp"
 
 int main()
 {
-	PipeFunction<int,int> print_out( [](int a) { printf("%d\n", a); return a; } );
+	PipeFunction<int,int,std::string> print_out(
+		[](int a, std::string str) { std::cout << str << ":" << a << std::endl; return a; }
+	);
 	
+	PipeFunction<int,int,int> add( [](int a, int b) { return a + b; } );
 	PipeFunction<int,int,int> mul( [](int a, int b) { return a * b; } );
 
-	PipeFunction<int,std::tuple<int,int> > add(
-		[](std::tuple<int, int> t){
-			return std::get<0>(t) + std::get<1>(t); }
+	PipeFunction<int, std::vector<int> >sum(
+		[](std::vector<int> vec){
+		int sum = 0;
+		for (auto i : vec) {
+			sum += i;
+			}
+		return sum;
+		}
 	);
 
-	std::tuple<int, int> x = std::make_tuple(3, 5);
+	PipeFunction<std::vector<int>, std::vector<int>, std::function<bool(int)> >filter(
+		[](std::vector<int> vec, std::function<bool(int)> fn){
+		std::vector<int> result;
+		for (auto i: vec) {
+			if (fn(i)) { result.push_back(i); }
+		}
+		return result;
+		}
+	);
 
-	int y = mul(2)(3);	//OK
-	PipeFunction<int,int> mul_2 = mul(2);   //OK
-	y | print_out;  //OK
-	x | add | print_out | mul_2 | print_out;    //OK
-	//x | add | print_out | mul(2) | print_out;	//NG...
+	std::vector<int>v{ 0,1,2,3,4,5,6,7,8,9 };
+
+	v
+	| filter( [](int i) {return i % 2; } )
+	| sum
+	| print_out("sum")
+	| add(3)
+	| print_out("add 3")
+	| mul(2)
+	| print_out("mul 2");
+
 	while (1) {}
 
 	return 0;

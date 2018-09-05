@@ -33,5 +33,4 @@ public:
 };
 
 template<typename T, typename FirstArg, typename... Args>
-T operator |(const FirstArg& t, PipeFunction<T,FirstArg, Args... >& func){ return func(t); }
-
+T operator |(const FirstArg& t, PipeFunction<T,FirstArg, Args... > func){ return func(t); }
