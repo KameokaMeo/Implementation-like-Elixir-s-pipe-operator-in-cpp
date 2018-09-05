@@ -1,5 +1,4 @@
 Use like this.
-The mechanism to pass only the first argument is not done well yet.
 ```C++
 #include <functional>
 #include <iostream>
@@ -46,8 +45,6 @@ int main()
 	| print_out("add 3")
 	| mul(2)
 	| print_out("mul 2");
-
-	while (1) {}
 
 	return 0;
 }
